@@ -23,12 +23,9 @@
 
   // Slots independent of services
   const SLOT_CONFIG = {
-    daysAhead: 3,
+    daysAhead: 10,
     stepMin: 30,
-    shifts: [
-      { startMin: 10 * 60, endMin: 13 * 60 },
-      { startMin: 15 * 60, endMin: 19 * 60 },
-    ],
+    shifts: [{ startMin: 8.5 * 60, endMin: 19 * 60 }],
   };
 
   const $ = (id) => document.getElementById(id);
@@ -244,10 +241,7 @@
 
       chip.innerHTML = `
         <span class="chip-icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
-        <span class="date-meta">
-          <span class="date-title">${weekday}</span>
-          <span class="date-sub">${md}</span>
-        </span>
+        <span class="date-title">${weekday} (${md})</span>
       `;
 
       chip.addEventListener("click", () => {
@@ -437,13 +431,6 @@
   // =========================
   function focusBooking() {
     dom.bookingPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setTimeout(() => {
-      try {
-        dom.bookingForm?.focus({ preventScroll: true });
-      } catch {
-        dom.bookingForm?.focus();
-      }
-    }, 250);
   }
 
   // =========================
@@ -461,9 +448,10 @@
   dom.heroCta?.addEventListener("click", focusBooking);
   dom.startWhatsapp?.addEventListener("click", openWhatsapp);
 
-  dom.scrollTop?.addEventListener("click", () =>
-    window.scrollTo({ top: 0, behavior: "smooth" }),
-  );
+  dom.scrollTop?.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
   dom.toastClose?.addEventListener("click", () =>
     dom.toast?.classList.add("app-hidden"),
   );
