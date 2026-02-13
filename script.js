@@ -19,7 +19,7 @@
 
   // Slots independent of services
   const SLOT_CONFIG = {
-    daysAhead: 10,
+    daysAhead: 5,
     stepMin: 30,
     shifts: [{ startMin: 8 * 60, endMin: 18 * 60 }],
   };
@@ -82,15 +82,6 @@
     return new Date(`${dayKey}T00:00:00`);
   }
 
-  function dateFaLong(dayKey) {
-    return fromDayKey(dayKey).toLocaleDateString("fa-IR", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
   function dateFaShort(dayKey) {
     const d = fromDayKey(dayKey);
     const weekday = d.toLocaleDateString("fa-IR", { weekday: "short" });
@@ -128,7 +119,11 @@
 
   function selectedDatetimeLabel() {
     if (!state.selectedDayKey || !state.selectedTimeIso) return "—";
-    return `${dateFaLong(state.selectedDayKey)} - ${timeFa(new Date(state.selectedTimeIso))}`;
+
+    const { weekday, md } = dateFaShort(state.selectedDayKey);
+    const timePart = timeFa(new Date(state.selectedTimeIso));
+
+    return `${weekday} ${md} - ${timePart}`;
   }
 
   // =========================
@@ -269,7 +264,7 @@
 
       chip.innerHTML = `
         <span class="chip-icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
-        <span class="date-title">${weekday} (${md})</span>
+        <span class="date-title">${weekday} ${md}</span>
       `;
 
       chip.addEventListener("click", () => {
@@ -349,16 +344,22 @@
 
     if (!state.selectedDayKey || !state.selectedTimeIso) return null;
 
-    const dateLabel = dateFaLong(state.selectedDayKey);
+    const { weekday, md } = dateFaShort(state.selectedDayKey);
+    const dateLabel = `${weekday} ${md}`;
     const timeLabel = timeFa(new Date(state.selectedTimeIso));
     const note = (dom.bookingNote?.value || "").trim();
 
-    return `سلام وقت بخیر 🌸
-برای ${services}
-تاریخ: ${dateLabel}
-ساعت: ${timeLabel}${note ? `\n\nتوضیح: ${note}` : ""}
+    return `سلام عزیزم 🌸
 
-ممنون می‌شم تایید بفرمایید 🙏`;
+برای ${services}
+تاریخ ${dateLabel}
+ساعت ${timeLabel}
+وقت می‌خواستم 💅✨
+
+${note ? `\n${note}` : ""}
+
+اگه اوکیه لطفاً خبرم کن 🤍
+مرسی ❤️`;
   }
 
   function openWhatsapp() {
