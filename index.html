@@ -10,7 +10,7 @@
       content="رزرو خدمات ناخن در تهران، زعفرانیه. مشاهده نمونه‌کارها و ارسال درخواست رزرو از طریق واتساپ."
     />
 
-    <link rel="stylesheet" href="style.css?v=13" />
+    <link rel="stylesheet" href="style.css?v=14" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -60,368 +60,372 @@
   </head>
 
   <body>
-    <!-- Toast -->
-    <div
-      id="app-toast"
-      class="app-toast app-hidden"
-      role="status"
-      aria-live="polite"
-    >
-      <div class="toast-content">
-        <span class="toast-icon" aria-hidden="true">
-          <i class="fa-solid fa-circle-info"></i>
-        </span>
-        <p id="toast-text" class="toast-text"></p>
-      </div>
-      <button
-        id="toast-close"
-        class="icon-button"
-        type="button"
-        aria-label="بستن پیام"
+    <div id="app" class="app">
+      <!-- Toast -->
+      <div
+        id="app-toast"
+        class="app-toast app-hidden"
+        role="status"
+        aria-live="polite"
       >
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+        <div class="toast-content">
+          <span class="toast-icon" aria-hidden="true">
+            <i class="fa-solid fa-circle-info"></i>
+          </span>
+          <p id="toast-text" class="toast-text"></p>
+        </div>
+        <button
+          id="toast-close"
+          class="icon-button"
+          type="button"
+          aria-label="بستن پیام"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Header (Glass) -->
+      <header class="page-header">
+        <div class="brand-area">
+          <img src="nail-logo.png" class="brand-logo" alt="لوگو" />
+          <div class="brand-meta">
+            <div class="brand-title">𝒉𝒆𝒅𝒊𝒚𝒏𝒂𝒊𝒍𝒂𝒓𝒕</div>
+            <div class="brand-subtitle">رزرو خدمات ناخن در زعفرانیه</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button id="focus-booking" class="soft-button" type="button">
+            رزرو
+          </button>
+          <button
+            id="focus-footer"
+            class="primary-button"
+            type="button"
+            aria-label="ارتباط"
+          >
+            ارتباط
+          </button>
+        </div>
+      </header>
+
+      <!-- Quick Actions (pro) -->
+      <nav class="quick-actions" aria-label="راه‌های ارتباط سریع">
+        <div class="qa-card">
+          <a
+            class="qa-item"
+            href="https://www.instagram.com/hediynailart"
+            target="_blank"
+            rel="noopener"
+          >
+            <i class="fa-brands fa-instagram qa-instagram"></i>
+          </a>
+
+          <a
+            class="qa-item qa-whatsapp"
+            href="https://wa.me/989150667527"
+            target="_blank"
+            rel="noopener"
+          >
+            <i class="fa-brands fa-whatsapp qa-whatsapp"></i>
+          </a>
+
+          <a class="qa-item qa-phone" href="tel:09150667527">
+            <i class="fa-solid fa-phone"></i>
+          </a>
+
+          <a
+            class="qa-item qa-location"
+            href="https://maps.app.goo.gl/nd6ScV5LDAq2LXeo8"
+            target="_blank"
+            rel="noopener"
+          >
+            <i class="fa-solid fa-location-dot qa-location"></i>
+          </a>
+        </div>
+      </nav>
+
+      <main class="page-main">
+        <div class="stack">
+          <!-- Hero -->
+          <section class="panel hero">
+            <h1 class="hero-title">رزرو خدمات ناخن در زعفرانیه</h1>
+            <p class="hero-text">
+              ژلیش، کاشت، ترمیم و طراحی ناخن در تهران، زعفرانیه. نمونه‌کارها را
+              ببینید و درخواست رزرو را در واتساپ ارسال کنید.
+            </p>
+            <button id="hero-cta" class="cta-button" type="button">
+              رزرو وقت <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </section>
+
+          <!-- Gallery (Swipe) -->
+          <section class="panel">
+            <div class="gallery-head">
+              <h2 class="panel-title">نمونه کارهای واقعی</h2>
+              <span class="section-hint">برای جابه‌جایی، لمس و کشیدن</span>
+            </div>
+
+            <div class="gallery-card" id="gallery-card">
+              <img
+                id="gallery-image"
+                class="gallery-image"
+                src=""
+                alt="نمونه کار ناخن"
+                loading="lazy"
+              />
+              <div
+                id="gallery-dots"
+                class="gallery-dots"
+                aria-label="نشانگر اسلاید"
+              ></div>
+            </div>
+          </section>
+
+          <!-- Booking -->
+          <section class="panel booking-panel" id="booking-panel">
+            <div class="section-head">
+              <h2 class="panel-title">رزرو وقت</h2>
+              <button id="toggle-help" class="link-button" type="button">
+                راهنما
+              </button>
+            </div>
+
+            <div id="help-panel" class="help-panel app-hidden">
+              <ul class="help-list">
+                <li>خدمات را لمس کن؛ با لمس دوباره لغو می‌شود.</li>
+                <li>تاریخ و ساعت را از چیپ‌ها انتخاب کن.</li>
+                <li>در پایان، واتساپ با متن آماده باز می‌شود.</li>
+              </ul>
+            </div>
+
+            <div class="form-panel" id="booking-form" tabindex="-1">
+              <div class="block">
+                <div class="block-head">
+                  <div class="block-title">انتخاب خدمات</div>
+                  <div class="block-hint">چند مورد قابل انتخاب است</div>
+                </div>
+                <div
+                  id="services-inline"
+                  class="chips-services"
+                  aria-label="خدمات"
+                ></div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div class="block-title">انتخاب تاریخ</div>
+                  <div class="block-hint">۱۰ روز آینده</div>
+                </div>
+                <div
+                  id="date-chips"
+                  class="chips-dates"
+                  aria-label="تاریخ‌ها"
+                ></div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div class="block-title">انتخاب ساعت</div>
+                  <div class="block-hint">زمان‌های پیشنهادی</div>
+                </div>
+                <div
+                  id="time-chips"
+                  class="chips-times"
+                  aria-label="ساعت‌ها"
+                ></div>
+              </div>
+
+              <label class="field-group">
+                <span class="field-label">توضیح کوتاه (اختیاری)</span>
+                <textarea
+                  id="booking-note"
+                  class="text-input text-area-input"
+                  placeholder="مثلاً طراحی ساده، رنگ خاص، یا توضیحی که لازم می‌دونی..."
+                ></textarea>
+              </label>
+
+              <div class="summary-panel">
+                <div class="summary-row">
+                  <span class="summary-label">خدمات انتخابی</span>
+                  <strong id="summary-services">—</strong>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">زمان انتخابی</span>
+                  <strong id="summary-datetime">—</strong>
+                </div>
+              </div>
+
+              <button id="start-whatsapp" class="cta-button" type="button">
+                ارسال درخواست از طریق واتساپ
+                <i class="fa-brands fa-whatsapp"></i>
+              </button>
+
+              <p class="helper-text">
+                <i class="fa-solid fa-shield-heart"></i>
+                رزرو نهایی بعد از هماهنگی در واتساپ انجام می‌شود.
+              </p>
+            </div>
+          </section>
+
+          <!-- FAQ -->
+          <section class="panel faq">
+            <h2 class="panel-title">سوالات پرتکرار</h2>
+
+            <div class="faq-list">
+              <details class="faq-item">
+                <summary>
+                  <span class="faq-q">
+                    <i class="fa-solid fa-circle-question"></i>
+                    رزرو چطور انجام می‌شود؟
+                  </span>
+                  <i
+                    class="fa-solid fa-chevron-down faq-chevron"
+                    aria-hidden="true"
+                  ></i>
+                </summary>
+                <p>
+                  خدمات و زمان را انتخاب می‌کنی و درخواست در واتساپ ارسال
+                  می‌شود؛ هماهنگی نهایی همانجا انجام می‌شود.
+                </p>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  <span class="faq-q">
+                    <i class="fa-solid fa-clock"></i>
+                    ساعات کاری چه زمانی است؟
+                  </span>
+                  <i
+                    class="fa-solid fa-chevron-down faq-chevron"
+                    aria-hidden="true"
+                  ></i>
+                </summary>
+                <p>
+                  معمولاً از ساعت ۸ تا ۱۸. اگر ساعت دیگری مدنظر داری داخل واتساپ
+                  پیام بده تا هماهنگ کنیم.
+                </p>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  <span class="faq-q">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    اگر زمان موردنظر آزاد نبود چی؟
+                  </span>
+                  <i
+                    class="fa-solid fa-chevron-down faq-chevron"
+                    aria-hidden="true"
+                  ></i>
+                </summary>
+                <p>
+                  زمان نزدیک به انتخاب تو پیشنهاد می‌شود تا سریع هماهنگ کنیم.
+                </p>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  <span class="faq-q">
+                    <i class="fa-solid fa-location-dot"></i>
+                    لوکیشن کجاست؟
+                  </span>
+                  <i
+                    class="fa-solid fa-chevron-down faq-chevron"
+                    aria-hidden="true"
+                  ></i>
+                </summary>
+                <p>تهران، زعفرانیه، بلوار بهزادی.</p>
+              </details>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="page-footer" id="footer">
+        <div class="footer-stack">
+          <div class="footer-head">
+            <div class="footer-brand">
+              <div class="footer-title">𝒉𝒆𝒅𝒊𝒚𝒏𝒂𝒊𝒍𝒂𝒓𝒕</div>
+              <div class="footer-note">رزرو خدمات ناخن در زعفرانیه</div>
+            </div>
+
+            <button
+              id="scroll-top"
+              class="icon-button"
+              type="button"
+              aria-label="رفتن به بالا"
+            >
+              <i class="fa-solid fa-arrow-up"></i>
+            </button>
+          </div>
+
+          <div class="footer-grid">
+            <section class="footer-card">
+              <h3 class="footer-card-title">راه‌های ارتباطی</h3>
+              <div class="footer-links">
+                <a class="footer-link footer-link-phone" href="tel:09150667527">
+                  <i class="fa-solid fa-phone footer-icon"></i> تماس
+                </a>
+
+                <a
+                  class="footer-link footer-link-whatsapp"
+                  href="https://wa.me/989150667527"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <i class="fa-brands fa-whatsapp footer-icon"></i> واتساپ
+                </a>
+
+                <a
+                  class="footer-link footer-link-instagram"
+                  href="https://www.instagram.com/hediynailart"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <i class="fa-brands fa-instagram footer-icon"></i> اینستاگرام
+                </a>
+              </div>
+            </section>
+
+            <section class="footer-card">
+              <h3 class="footer-card-title">لوکیشن - تهران، زعفرانیه</h3>
+              <iframe
+                class="map-container-iframe"
+                src="https://www.google.com/maps?q=تهران،زعفرانیه،بهزادی&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="نقشه"
+              ></iframe>
+            </section>
+
+            <section class="footer-card">
+              <h3 class="footer-card-title">قوانین ساده</h3>
+              <ul class="policy-list">
+                <li>رزرو از طریق واتساپ نهایی می‌شود.</li>
+                <li>در صورت شلوغی، زمان جایگزین پیشنهاد می‌شود.</li>
+                <li>هماهنگی نهایی توسط شما انجام می‌شود.</li>
+              </ul>
+            </section>
+
+            <section class="footer-card">
+              <h3 class="footer-card-title">درباره ما</h3>
+              <p class="footer-text">
+                فضایی آرام و حرفه‌ای برای طراحی و مراقبت از ناخن.
+              </p>
+              <p class="footer-text">
+                تمرکز ما روی کیفیت، جزئیات و تجربه رزرو ساده است.
+              </p>
+            </section>
+          </div>
+        </div>
+        <div class="footer-copy">
+          © <span id="footer-year"></span> تمامی حقوق محفوظ است | طراحی شده با
+          <i class="fa-solid fa-heart heart-icon"></i>
+        </div>
+      </footer>
     </div>
 
-    <!-- Header (Glass) -->
-    <header class="page-header">
-      <div class="brand-area">
-        <img src="nail-logo.png" class="brand-logo" alt="لوگو" />
-        <div class="brand-meta">
-          <div class="brand-title">𝒉𝒆𝒅𝒊𝒚𝒏𝒂𝒊𝒍𝒂𝒓𝒕</div>
-          <div class="brand-subtitle">رزرو خدمات ناخن در زعفرانیه</div>
-        </div>
-      </div>
-
-      <div class="header-actions">
-        <button id="focus-booking" class="soft-button" type="button">
-          رزرو
-        </button>
-        <button
-          id="focus-footer"
-          class="primary-button"
-          type="button"
-          aria-label="ارتباط"
-        >
-          ارتباط
-        </button>
-      </div>
-    </header>
-
-    <!-- Quick Actions (pro) -->
-    <nav class="quick-actions" aria-label="راه‌های ارتباط سریع">
-      <div class="qa-card">
-        <a
-          class="qa-item"
-          href="https://www.instagram.com/hediynailart"
-          target="_blank"
-          rel="noopener"
-        >
-          <i class="fa-brands fa-instagram qa-instagram"></i>
-        </a>
-
-        <a
-          class="qa-item qa-whatsapp"
-          href="https://wa.me/989150667527"
-          target="_blank"
-          rel="noopener"
-        >
-          <i class="fa-brands fa-whatsapp qa-whatsapp"></i>
-        </a>
-
-        <a class="qa-item qa-phone" href="tel:09150667527">
-          <i class="fa-solid fa-phone"></i>
-        </a>
-
-        <a
-          class="qa-item qa-location"
-          href="https://maps.app.goo.gl/nd6ScV5LDAq2LXeo8"
-          target="_blank"
-          rel="noopener"
-        >
-          <i class="fa-solid fa-location-dot qa-location"></i>
-        </a>
-      </div>
-    </nav>
-
-    <main class="page-main">
-      <div class="stack">
-        <!-- Hero -->
-        <section class="panel hero">
-          <h1 class="hero-title">رزرو خدمات ناخن در زعفرانیه</h1>
-          <p class="hero-text">
-            ژلیش، کاشت، ترمیم و طراحی ناخن در تهران، زعفرانیه. نمونه‌کارها را
-            ببینید و درخواست رزرو را در واتساپ ارسال کنید.
-          </p>
-          <button id="hero-cta" class="cta-button" type="button">
-            رزرو وقت <i class="fa-solid fa-arrow-left"></i>
-          </button>
-        </section>
-
-        <!-- Gallery (Swipe) -->
-        <section class="panel">
-          <div class="gallery-head">
-            <h2 class="panel-title">نمونه کارهای واقعی</h2>
-            <span class="section-hint">برای جابه‌جایی، لمس و کشیدن</span>
-          </div>
-
-          <div class="gallery-card" id="gallery-card">
-            <img
-              id="gallery-image"
-              class="gallery-image"
-              src=""
-              alt="نمونه کار ناخن"
-              loading="lazy"
-            />
-            <div
-              id="gallery-dots"
-              class="gallery-dots"
-              aria-label="نشانگر اسلاید"
-            ></div>
-          </div>
-        </section>
-
-        <!-- Booking -->
-        <section class="panel booking-panel" id="booking-panel">
-          <div class="section-head">
-            <h2 class="panel-title">رزرو وقت</h2>
-            <button id="toggle-help" class="link-button" type="button">
-              راهنما
-            </button>
-          </div>
-
-          <div id="help-panel" class="help-panel app-hidden">
-            <ul class="help-list">
-              <li>خدمات را لمس کن؛ با لمس دوباره لغو می‌شود.</li>
-              <li>تاریخ و ساعت را از چیپ‌ها انتخاب کن.</li>
-              <li>در پایان، واتساپ با متن آماده باز می‌شود.</li>
-            </ul>
-          </div>
-
-          <div class="form-panel" id="booking-form" tabindex="-1">
-            <div class="block">
-              <div class="block-head">
-                <div class="block-title">انتخاب خدمات</div>
-                <div class="block-hint">چند مورد قابل انتخاب است</div>
-              </div>
-              <div
-                id="services-inline"
-                class="chips-services"
-                aria-label="خدمات"
-              ></div>
-            </div>
-
-            <div class="block">
-              <div class="block-head">
-                <div class="block-title">انتخاب تاریخ</div>
-                <div class="block-hint">۱۰ روز آینده</div>
-              </div>
-              <div
-                id="date-chips"
-                class="chips-dates"
-                aria-label="تاریخ‌ها"
-              ></div>
-            </div>
-
-            <div class="block">
-              <div class="block-head">
-                <div class="block-title">انتخاب ساعت</div>
-                <div class="block-hint">زمان‌های پیشنهادی</div>
-              </div>
-              <div
-                id="time-chips"
-                class="chips-times"
-                aria-label="ساعت‌ها"
-              ></div>
-            </div>
-
-            <label class="field-group">
-              <span class="field-label">توضیح کوتاه (اختیاری)</span>
-              <textarea
-                id="booking-note"
-                class="text-input text-area-input"
-                placeholder="مثلاً طراحی ساده، رنگ خاص، یا توضیحی که لازم می‌دونی..."
-              ></textarea>
-            </label>
-
-            <div class="summary-panel">
-              <div class="summary-row">
-                <span class="summary-label">خدمات انتخابی</span>
-                <strong id="summary-services">—</strong>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">زمان انتخابی</span>
-                <strong id="summary-datetime">—</strong>
-              </div>
-            </div>
-
-            <button id="start-whatsapp" class="cta-button" type="button">
-              ارسال درخواست از طریق واتساپ
-              <i class="fa-brands fa-whatsapp"></i>
-            </button>
-
-            <p class="helper-text">
-              <i class="fa-solid fa-shield-heart"></i>
-              رزرو نهایی بعد از هماهنگی در واتساپ انجام می‌شود.
-            </p>
-          </div>
-        </section>
-
-        <!-- FAQ -->
-        <section class="panel faq">
-          <h2 class="panel-title">سوالات پرتکرار</h2>
-
-          <div class="faq-list">
-            <details class="faq-item">
-              <summary>
-                <span class="faq-q">
-                  <i class="fa-solid fa-circle-question"></i>
-                  رزرو چطور انجام می‌شود؟
-                </span>
-                <i
-                  class="fa-solid fa-chevron-down faq-chevron"
-                  aria-hidden="true"
-                ></i>
-              </summary>
-              <p>
-                خدمات و زمان را انتخاب می‌کنی و درخواست در واتساپ ارسال می‌شود؛
-                هماهنگی نهایی همانجا انجام می‌شود.
-              </p>
-            </details>
-
-            <details class="faq-item">
-              <summary>
-                <span class="faq-q">
-                  <i class="fa-solid fa-clock"></i>
-                  ساعات کاری چه زمانی است؟
-                </span>
-                <i
-                  class="fa-solid fa-chevron-down faq-chevron"
-                  aria-hidden="true"
-                ></i>
-              </summary>
-              <p>
-                معمولاً از ساعت ۸ تا ۱۸. اگر ساعت دیگری مدنظر داری داخل واتساپ
-                پیام بده تا هماهنگ کنیم.
-              </p>
-            </details>
-
-            <details class="faq-item">
-              <summary>
-                <span class="faq-q">
-                  <i class="fa-solid fa-calendar-check"></i>
-                  اگر زمان موردنظر آزاد نبود چی؟
-                </span>
-                <i
-                  class="fa-solid fa-chevron-down faq-chevron"
-                  aria-hidden="true"
-                ></i>
-              </summary>
-              <p>زمان نزدیک به انتخاب تو پیشنهاد می‌شود تا سریع هماهنگ کنیم.</p>
-            </details>
-
-            <details class="faq-item">
-              <summary>
-                <span class="faq-q">
-                  <i class="fa-solid fa-location-dot"></i>
-                  لوکیشن کجاست؟
-                </span>
-                <i
-                  class="fa-solid fa-chevron-down faq-chevron"
-                  aria-hidden="true"
-                ></i>
-              </summary>
-              <p>تهران، زعفرانیه، بلوار بهزادی.</p>
-            </details>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="page-footer" id="footer">
-      <div class="footer-stack">
-        <div class="footer-head">
-          <div class="footer-brand">
-            <div class="footer-title">𝒉𝒆𝒅𝒊𝒚𝒏𝒂𝒊𝒍𝒂𝒓𝒕</div>
-            <div class="footer-note">رزرو خدمات ناخن در زعفرانیه</div>
-          </div>
-
-          <button
-            id="scroll-top"
-            class="icon-button"
-            type="button"
-            aria-label="رفتن به بالا"
-          >
-            <i class="fa-solid fa-arrow-up"></i>
-          </button>
-        </div>
-
-        <div class="footer-grid">
-          <section class="footer-card">
-            <h3 class="footer-card-title">راه‌های ارتباطی</h3>
-            <div class="footer-links">
-              <a class="footer-link footer-link-phone" href="tel:09150667527">
-                <i class="fa-solid fa-phone footer-icon"></i> تماس
-              </a>
-
-              <a
-                class="footer-link footer-link-whatsapp"
-                href="https://wa.me/989150667527"
-                target="_blank"
-                rel="noopener"
-              >
-                <i class="fa-brands fa-whatsapp footer-icon"></i> واتساپ
-              </a>
-
-              <a
-                class="footer-link footer-link-instagram"
-                href="https://www.instagram.com/hediynailart"
-                target="_blank"
-                rel="noopener"
-              >
-                <i class="fa-brands fa-instagram footer-icon"></i> اینستاگرام
-              </a>
-            </div>
-          </section>
-
-          <section class="footer-card">
-            <h3 class="footer-card-title">لوکیشن - تهران، زعفرانیه</h3>
-            <iframe
-              class="map-container-iframe"
-              src="https://www.google.com/maps?q=تهران،زعفرانیه،بهزادی&output=embed"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              title="نقشه"
-            ></iframe>
-          </section>
-
-          <section class="footer-card">
-            <h3 class="footer-card-title">قوانین ساده</h3>
-            <ul class="policy-list">
-              <li>رزرو از طریق واتساپ نهایی می‌شود.</li>
-              <li>در صورت شلوغی، زمان جایگزین پیشنهاد می‌شود.</li>
-              <li>هماهنگی نهایی توسط شما انجام می‌شود.</li>
-            </ul>
-          </section>
-
-          <section class="footer-card">
-            <h3 class="footer-card-title">درباره ما</h3>
-            <p class="footer-text">
-              فضایی آرام و حرفه‌ای برای طراحی و مراقبت از ناخن.
-            </p>
-            <p class="footer-text">
-              تمرکز ما روی کیفیت، جزئیات و تجربه رزرو ساده است.
-            </p>
-          </section>
-        </div>
-      </div>
-      <div class="footer-copy">
-        © <span id="footer-year"></span> تمامی حقوق محفوظ است | طراحی شده با
-        <i class="fa-solid fa-heart heart-icon"></i>
-      </div>
-    </footer>
-
-    <script src="script.js?v=12" defer></script>
+    <script src="script.js?v=14" defer></script>
   </body>
 </html>
