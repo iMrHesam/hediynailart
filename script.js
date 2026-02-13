@@ -84,7 +84,8 @@
   }
 
   function fromDayKey(dayKey) {
-    return new Date(`${dayKey}T00:00:00`);
+    const [y, m, d] = dayKey.split("-").map(Number);
+    return new Date(y, m - 1, d); // local date, safe on all browsers
   }
 
   function dateFaShort(dayKey) {
@@ -99,8 +100,9 @@
 
   function dateFromDayKeyAndMinute(dayKey, minute) {
     const d = fromDayKey(dayKey);
-    d.setHours(0, 0, 0, 0);
-    d.setMinutes(minute);
+    const hh = Math.floor(minute / 60);
+    const mm = minute % 60;
+    d.setHours(hh, mm, 0, 0);
     return d; // local time
   }
 
