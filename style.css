@@ -48,7 +48,7 @@ button:active {
 
 .app {
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
   height: 100%;
   background: rgb(255, 245, 241);
   color: rgb(88, 48, 110);
@@ -60,7 +60,7 @@ button:active {
 
 .app-toast {
   width: calc(100% - 24px);
-  max-width: 676px;
+  max-width: 776px;
   height: auto;
   padding: 12px;
   background: rgb(255, 255, 255);
@@ -111,6 +111,7 @@ button:active {
 
 .page-header {
   width: 100%;
+  height: 64px;
   padding: 12px;
   background: rgba(255, 255, 255, 0.55);
   border-bottom: 1px solid rgba(241, 209, 225, 0.85);
@@ -283,44 +284,23 @@ button:active {
   margin-bottom: 12px;
 }
 
-.section-head,
-.gallery-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.gallery-head {
-  margin-bottom: 12px;
-}
-
-.panel-title {
-  font-size: 15px;
-  font-weight: bold;
-  color: rgb(88, 48, 110);
-}
-
-.section-hint {
-  color: rgb(147, 103, 170);
-  font-size: 12px;
-  font-weight: bold;
-}
-
 .gallery-card {
   background: white;
   border-radius: 12px;
   border: 1px solid rgb(241, 209, 225);
   position: relative;
   overflow: hidden;
+  touch-action: pan-y;
   user-select: none;
 }
 
 .gallery-image {
   width: 100%;
-  height: 320px;
+  height: 350px;
   object-fit: cover;
   display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .gallery-dots {
@@ -346,10 +326,35 @@ button:active {
   border-color: rgb(234, 92, 157);
 }
 
+.section-head,
+.gallery-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gallery-head {
+  margin-bottom: 12px;
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: rgb(88, 48, 110);
+}
+
+.section-hint {
+  color: rgb(147, 103, 170);
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .booking-panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  scroll-margin-top: 74px;
 }
 
 .help-panel {
@@ -701,7 +706,7 @@ button:active {
   display: none !important;
 }
 
-@media (min-width: 700px) {
+@media (min-width: 800px) {
   .app {
     border-left: 1px solid rgba(241, 209, 225, 0.85);
     border-right: 1px solid rgba(241, 209, 225, 0.85);

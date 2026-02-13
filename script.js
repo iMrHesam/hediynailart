@@ -15,11 +15,12 @@
     { id: "design", name: "طراحی" },
   ];
 
+  // Gallery (16 images)
   const GALLERY = Array.from({ length: 16 }, (_, i) => `./nail-${i + 1}.webp`);
 
   // Slots independent of services
   const SLOT_CONFIG = {
-    daysAhead: 10,
+    daysAhead: 10, // number of WORKING days to show
     stepMin: 30,
     shifts: [{ startMin: 8 * 60, endMin: 18 * 60 }],
   };
@@ -77,7 +78,9 @@
   }
 
   function toDayKey(date) {
-    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(
+      date.getDate(),
+    )}`;
   }
 
   function fromDayKey(dayKey) {
@@ -121,10 +124,8 @@
 
   function selectedDatetimeLabel() {
     if (!state.selectedDayKey || !state.selectedTimeIso) return "—";
-
     const { weekday, md } = dateFaShort(state.selectedDayKey);
     const timePart = timeFa(new Date(state.selectedTimeIso));
-
     return `${weekday} ${md} - ${timePart}`;
   }
 
@@ -196,10 +197,10 @@
     return slots;
   }
 
-  // ✅ FIX: always generate EXACTLY next 10 days (no filtering)
+  // Working days: Sunday(0) to Thursday(4)
   function isWorkingDay(date) {
     const day = date.getDay(); // 0=Sun ... 6=Sat
-    return day >= 0 && day <= 4; // یکشنبه تا پنجشنبه
+    return day >= 0 && day <= 4;
   }
 
   function minutesNow() {
@@ -208,10 +209,10 @@
   }
 
   function lastShiftEndMin() {
-    // اگر چند شیفت داری، آخرین endMin رو پیدا می‌کنیم
     return Math.max(...SLOT_CONFIG.shifts.map((s) => s.endMin));
   }
 
+  // Show next N working days; if today's shift ended, start from next day
   function computeNextDays() {
     const base = new Date();
     base.setHours(0, 0, 0, 0);
@@ -220,7 +221,6 @@
     const todayWorking = isWorkingDay(now);
     const shiftEnded = minutesNow() >= lastShiftEndMin();
 
-    // اگر امروز روز کاریه ولی شیفت تموم شده، شروع از فردا
     if (todayWorking && shiftEnded) {
       base.setDate(base.getDate() + 1);
     }
@@ -343,7 +343,6 @@
   function buildWhatsappMessage() {
     const services = selectedServicesLabel();
     if (services === "—") return null;
-
     if (!state.selectedDayKey || !state.selectedTimeIso) return null;
 
     const { weekday, md } = dateFaShort(state.selectedDayKey);
@@ -356,9 +355,7 @@
 برای ${services}
 تاریخ ${dateLabel}
 ساعت ${timeLabel}
-وقت می‌خواستم 💅✨
-
-${note ? `\n${note}` : ""}
+وقت می‌خواستم 💅✨${note ? `\n\n${note}` : ""}
 
 اگه اوکیه لطفاً خبرم کن 🤍
 مرسی ❤️`;
@@ -379,11 +376,18 @@ ${note ? `\n${note}` : ""}
   // =========================
   // Gallery (Swipe)
   // =========================
+  function swipeDirFromDx(dx) {
+    // اصلاح جهت
+    return dx < 0 ? -1 : +1;
+  }
+
   function renderDots(total, active) {
     if (!dom.galleryDots) return;
     dom.galleryDots.innerHTML = "";
+
     for (let i = 0; i < total; i += 1) {
-      const dot = document.createElement("div");
+      const dot = document.createElement("button");
+      dot.type = "button";
       dot.className = "gallery-dot" + (i === active ? " active" : "");
       dot.addEventListener("click", () => {
         state.galleryIndex = i;
@@ -407,6 +411,8 @@ ${note ? `\n${note}` : ""}
 
   function restartAuto() {
     clearInterval(state.autoTimer);
+    if (GALLERY.length <= 1) return;
+
     state.autoTimer = setInterval(() => {
       state.galleryIndex += 1;
       renderGallery();
@@ -421,10 +427,14 @@ ${note ? `\n${note}` : ""}
   }
 
   function onPointerDown(e) {
+    // Pause autoplay while user interacts (better UX)
+    clearInterval(state.autoTimer);
+
     state.swipe.active = true;
     state.swipe.locked = false;
     state.swipe.startX = e.clientX;
     state.swipe.startY = e.clientY;
+
     try {
       dom.galleryCard?.setPointerCapture(e.pointerId);
     } catch {}
@@ -437,24 +447,42 @@ ${note ? `\n${note}` : ""}
     const dy = e.clientY - state.swipe.startY;
 
     if (!state.swipe.locked) {
-      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy))
+      if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)) {
         state.swipe.locked = true;
-      else if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx))
+      } else if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) {
         state.swipe.active = false;
+        state.swipe.locked = false;
+        return;
+      }
     }
+
     if (state.swipe.locked) e.preventDefault();
   }
 
   function onPointerUp(e) {
     if (!state.swipe.active) return;
+
     const dx = e.clientX - state.swipe.startX;
+
     state.swipe.active = false;
 
-    if (Math.abs(dx) >= 45) {
-      // RTL: drag left => next
-      if (dx < 0) swipeToNext(+1);
-      else swipeToNext(-1);
+    // Only if it was a horizontal swipe
+    if (!state.swipe.locked) {
+      restartAuto();
+      return;
     }
+
+    if (Math.abs(dx) >= 45) {
+      swipeToNext(swipeDirFromDx(dx));
+    } else {
+      restartAuto();
+    }
+  }
+
+  function onPointerCancel() {
+    state.swipe.active = false;
+    state.swipe.locked = false;
+    restartAuto();
   }
 
   // =========================
@@ -479,7 +507,10 @@ ${note ? `\n${note}` : ""}
   dom.heroCta?.addEventListener("click", focusBooking);
   dom.startWhatsapp?.addEventListener("click", openWhatsapp);
 
+  // Scroll-to-top for the scroll container (.app)
   dom.scrollTop?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     dom.app?.scrollTo({ top: 0, behavior: "smooth" });
   });
 
@@ -497,13 +528,10 @@ ${note ? `\n${note}` : ""}
     dom.galleryCard.addEventListener("pointerup", onPointerUp, {
       passive: true,
     });
-    dom.galleryCard.addEventListener("pointercancel", onPointerUp, {
+    dom.galleryCard.addEventListener("pointercancel", onPointerCancel, {
       passive: true,
     });
-    dom.galleryCard.addEventListener(
-      "lostpointercapture",
-      () => (state.swipe.active = false),
-    );
+    dom.galleryCard.addEventListener("lostpointercapture", onPointerCancel);
   }
 
   // =========================
