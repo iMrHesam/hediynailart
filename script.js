@@ -540,9 +540,6 @@
   if (dom.footerYear)
     dom.footerYear.textContent = String(new Date().getFullYear());
 
-  window.scrollTo(0, 0);
-  dom.app?.scrollTo({ top: 0 });
-
   renderServicesInline();
   renderDateChips();
   syncSummary();
