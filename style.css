@@ -59,8 +59,6 @@ button:active {
   color: rgb(88, 48, 110);
   direction: rtl;
   font-size: 15px;
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
   position: relative;
 }
