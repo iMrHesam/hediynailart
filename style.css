@@ -32,6 +32,10 @@ textarea {
   appearance: none;
 }
 
+textarea {
+  outline: 2px solid rgba(234, 92, 157, 0.55);
+}
+
 button {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -47,9 +51,9 @@ button:active {
 }
 
 .app {
-  width: 100%;
+  width: 100vw;
   max-width: 800px;
-  height: 100%;
+  height: 100vh;
   background: rgb(255, 245, 241);
   color: rgb(88, 48, 110);
   direction: rtl;

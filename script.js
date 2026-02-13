@@ -1,6 +1,10 @@
 (() => {
   "use strict";
 
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
   const PHONE = "989150667527"; // wa.me
 
   const SERVICES = [
@@ -539,6 +543,9 @@
   // =========================
   if (dom.footerYear)
     dom.footerYear.textContent = String(new Date().getFullYear());
+
+  window.scrollTo(0, 0);
+  dom.app?.scrollTo({ top: 0 });
 
   renderServicesInline();
   renderDateChips();
