@@ -4,28 +4,24 @@
   const PHONE = "989150667527"; // wa.me
 
   const SERVICES = [
-    { id: "gelish", name: "ژلیش" },
-    { id: "ext", name: "کاشت" },
-    { id: "repair", name: "ترمیم" },
+    { id: "gelish_natural", name: "ژلیش ناخن طبیعی" },
+    { id: "laminate_gelish", name: "لمینیت و ژلیش" },
+    { id: "extension_gelish", name: "کاشت اولیه و ژلیش" },
+    { id: "repair_powder_gelish", name: "ترمیم پودر و ژلیش" },
+    { id: "repair_gel_gelish", name: "ترمیم ژل و ژلیش" },
+    { id: "manicure_wet", name: "مانیکور خیس" },
+    { id: "manicure_dry", name: "مانیکور خشک" },
+    { id: "pedicure_vip", name: "پدیکور VIP" },
     { id: "design", name: "طراحی" },
-    { id: "laminate", name: "لمینت" },
-    { id: "remove", name: "ریموو" },
-    { id: "mani", name: "مانیکور" },
-    { id: "pedi", name: "پدیکور" },
   ];
 
-  const GALLERY = [
-    "./nail-1.png",
-    "./nail-2.png",
-    "./nail-3.png",
-    "./nail-4.png",
-  ];
+  const GALLERY = Array.from({ length: 16 }, (_, i) => `./nail-${i + 1}.webp`);
 
   // Slots independent of services
   const SLOT_CONFIG = {
     daysAhead: 10,
     stepMin: 30,
-    shifts: [{ startMin: 8.5 * 60, endMin: 19 * 60 }],
+    shifts: [{ startMin: 8 * 60, endMin: 18 * 60 }],
   };
 
   const $ = (id) => document.getElementById(id);
@@ -204,16 +200,48 @@
   }
 
   // ✅ FIX: always generate EXACTLY next 10 days (no filtering)
+  function isWorkingDay(date) {
+    const day = date.getDay(); // 0=Sun ... 6=Sat
+    return day >= 0 && day <= 4; // یکشنبه تا پنجشنبه
+  }
+
+  function minutesNow() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+
+  function lastShiftEndMin() {
+    // اگر چند شیفت داری، آخرین endMin رو پیدا می‌کنیم
+    return Math.max(...SLOT_CONFIG.shifts.map((s) => s.endMin));
+  }
+
   function computeNextDays() {
     const base = new Date();
     base.setHours(0, 0, 0, 0);
 
-    const days = [];
-    for (let i = 0; i < SLOT_CONFIG.daysAhead; i += 1) {
-      const d = new Date(base);
-      d.setDate(base.getDate() + i);
-      days.push(toDayKey(d));
+    const now = new Date();
+    const todayWorking = isWorkingDay(now);
+    const shiftEnded = minutesNow() >= lastShiftEndMin();
+
+    // اگر امروز روز کاریه ولی شیفت تموم شده، شروع از فردا
+    if (todayWorking && shiftEnded) {
+      base.setDate(base.getDate() + 1);
     }
+
+    const days = [];
+    let offset = 0;
+
+    while (days.length < SLOT_CONFIG.daysAhead) {
+      const d = new Date(base);
+      d.setDate(base.getDate() + offset);
+
+      if (isWorkingDay(d)) {
+        days.push(toDayKey(d));
+      }
+
+      offset += 1;
+    }
+
     return days;
   }
 

@@ -436,7 +436,7 @@ button:active {
 
 .chips-times {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
@@ -446,11 +446,12 @@ button:active {
   color: rgb(88, 48, 110);
   border-radius: 12px;
   border: 1px solid rgb(241, 209, 225);
-  font-size: 15px;
+  font-size: 12px;
   font-weight: bold;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  text-align: right;
   gap: 10px;
   min-height: 40px;
 }
