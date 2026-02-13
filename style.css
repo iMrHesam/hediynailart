@@ -21,8 +21,9 @@ body {
   direction: rtl;
   font-size: 15px;
   display: flex;
-  justify-content: center;
-  overflow: hidden;
+  flex-direction: column;
+  overflow-y: auto;
+  position: relative;
 }
 
 a,
@@ -51,21 +52,8 @@ button:active {
   transform: scale(0.9);
 }
 
-.app {
-  width: 100%;
-  max-width: 800px;
-  height: 100%;
-  background: rgb(255, 245, 241);
-  color: rgb(88, 48, 110);
-  direction: rtl;
-  font-size: 15px;
-  overflow-y: auto;
-  position: relative;
-}
-
 .app-toast {
   width: calc(100% - 24px);
-  max-width: 776px;
   height: auto;
   padding: 12px;
   background: rgb(255, 255, 255);

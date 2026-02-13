@@ -28,8 +28,6 @@
   const $ = (id) => document.getElementById(id);
 
   const dom = {
-    app: $("app"),
-
     focusBooking: $("focus-booking"),
     heroCta: $("hero-cta"),
     bookingPanel: $("booking-panel"),
@@ -509,9 +507,7 @@
 
   // Scroll-to-top for the scroll container (.app)
   dom.scrollTop?.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dom.app?.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
   dom.toastClose?.addEventListener("click", () =>
