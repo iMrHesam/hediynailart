@@ -26,6 +26,7 @@
     daysAhead: 10, // number of WORKING days to show
     stepMin: 30,
     shifts: [{ startMin: 8 * 60, endMin: 18 * 60 }],
+    workingDays: [0, 1, 2, 3, 4], // یکشنبه تا پنجشنبه (0=Sun ... 6=Sat)
   };
 
   const $ = (id) => document.getElementById(id);
@@ -36,7 +37,7 @@
     focusBooking: $("focus-booking"),
     heroCta: $("hero-cta"),
     bookingPanel: $("booking-panel"),
-    bookingForm: $("booking-form"),
+
     toggleHelp: $("toggle-help"),
     helpPanel: $("help-panel"),
 
@@ -67,7 +68,7 @@
   const state = {
     selectedServiceIds: new Set(),
     selectedDayKey: "",
-    selectedTimeMin: null, // number | null
+    selectedTimeMin: null, // minute-of-day | null
 
     galleryIndex: 0,
     autoTimer: null,
@@ -76,6 +77,9 @@
     toastTimer: null,
   };
 
+  // =========================
+  // Small utils
+  // =========================
   function pad2(n) {
     return String(n).padStart(2, "0");
   }
@@ -88,7 +92,7 @@
 
   function fromDayKey(dayKey) {
     const [y, m, d] = dayKey.split("-").map(Number);
-    return new Date(y, m - 1, d); // local date, safe on all browsers
+    return new Date(y, m - 1, d);
   }
 
   function dateFaShort(dayKey) {
@@ -103,10 +107,8 @@
 
   function dateFromDayKeyAndMinute(dayKey, minute) {
     const d = fromDayKey(dayKey);
-    const hh = Math.floor(minute / 60);
-    const mm = minute % 60;
-    d.setHours(hh, mm, 0, 0);
-    return d; // local time
+    d.setHours(Math.floor(minute / 60), minute % 60, 0, 0);
+    return d;
   }
 
   function timeFa(date) {
@@ -116,17 +118,37 @@
     });
   }
 
-  function showToast(text) {
-    if (!dom.toast || !dom.toastText) return;
-    dom.toastText.textContent = String(text || "");
-    dom.toast.classList.remove("app-hidden");
-    clearTimeout(state.toastTimer);
-    state.toastTimer = setTimeout(
-      () => dom.toast.classList.add("app-hidden"),
-      2600,
-    );
+  function minutesNow() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
   }
 
+  function showToast(text) {
+    if (!dom.toast || !dom.toastText) return;
+
+    dom.toastText.textContent = String(text || "");
+    dom.toast.classList.remove("app-hidden");
+
+    clearTimeout(state.toastTimer);
+    state.toastTimer = setTimeout(() => {
+      dom.toast?.classList.add("app-hidden");
+    }, 2600);
+  }
+
+  // Generic scroll helper (DRY)
+  function scrollToEl(el, options = {}) {
+    if (!el) return;
+    const { behavior = "smooth", block = "start" } = options;
+    el.scrollIntoView({ behavior, block });
+  }
+
+  function scrollAppTop() {
+    dom.app?.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // =========================
+  // Labels
+  // =========================
   function selectedServicesLabel() {
     const names = SERVICES.filter((s) =>
       state.selectedServiceIds.has(s.id),
@@ -152,14 +174,12 @@
     dom.servicesInline.innerHTML = "";
 
     SERVICES.forEach((service) => {
+      const selected = state.selectedServiceIds.has(service.id);
+
       const chip = document.createElement("button");
       chip.type = "button";
-      chip.className =
-        "chip" + (state.selectedServiceIds.has(service.id) ? " selected" : "");
-      chip.setAttribute(
-        "aria-pressed",
-        state.selectedServiceIds.has(service.id) ? "true" : "false",
-      );
+      chip.className = "chip" + (selected ? " selected" : "");
+      chip.setAttribute("aria-pressed", selected ? "true" : "false");
 
       chip.innerHTML = `
         <span class="chip-icon" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
@@ -167,8 +187,7 @@
       `;
 
       chip.addEventListener("click", () => {
-        if (state.selectedServiceIds.has(service.id))
-          state.selectedServiceIds.delete(service.id);
+        if (selected) state.selectedServiceIds.delete(service.id);
         else state.selectedServiceIds.add(service.id);
 
         renderServicesInline();
@@ -180,11 +199,27 @@
   }
 
   // =========================
-  // Slots
+  // Working days + slots
   // =========================
+  function isWorkingDay(date) {
+    return SLOT_CONFIG.workingDays.includes(date.getDay());
+  }
+
+  // Build available slots for a specific dayKey
   function buildSlotsForDay(dayKey) {
     const dayDate = fromDayKey(dayKey);
     const slots = [];
+
+    const now = new Date();
+    const isToday =
+      dayDate.getFullYear() === now.getFullYear() &&
+      dayDate.getMonth() === now.getMonth() &&
+      dayDate.getDate() === now.getDate();
+
+    // Round "now" UP to next step (so 10:10 -> 10:30 when stepMin=30)
+    const currentMin = isToday
+      ? Math.ceil(minutesNow() / SLOT_CONFIG.stepMin) * SLOT_CONFIG.stepMin
+      : null;
 
     SLOT_CONFIG.shifts.forEach((shift) => {
       for (
@@ -192,18 +227,11 @@
         minute <= shift.endMin - SLOT_CONFIG.stepMin;
         minute += SLOT_CONFIG.stepMin
       ) {
+        if (isToday && minute < currentMin) continue;
+
         const start = new Date(dayDate);
         start.setHours(0, 0, 0, 0);
         start.setMinutes(minute);
-
-        // hide past times only for today
-        const now = new Date();
-        const isToday =
-          start.getFullYear() === now.getFullYear() &&
-          start.getMonth() === now.getMonth() &&
-          start.getDate() === now.getDate();
-
-        if (isToday && start.getTime() < Date.now()) continue;
 
         slots.push(start);
       }
@@ -212,31 +240,16 @@
     return slots;
   }
 
-  // Working days: Sunday(0) to Thursday(4)
-  function isWorkingDay(date) {
-    const day = date.getDay(); // 0=Sun ... 6=Sat
-    return day >= 0 && day <= 4;
-  }
-
-  function minutesNow() {
-    const now = new Date();
-    return now.getHours() * 60 + now.getMinutes();
-  }
-
-  function lastShiftEndMin() {
-    return Math.max(...SLOT_CONFIG.shifts.map((s) => s.endMin));
-  }
-
-  // Show next N working days; if today's shift ended, start from next day
+  // Show next N working days; if today has no slots, start from next day
   function computeNextDays() {
     const base = new Date();
     base.setHours(0, 0, 0, 0);
 
-    const now = new Date();
-    const todayWorking = isWorkingDay(now);
-    const shiftEnded = minutesNow() >= lastShiftEndMin();
+    const todayWorking = isWorkingDay(base);
+    const todayKey = toDayKey(base);
+    const todayHasSlots = todayWorking && buildSlotsForDay(todayKey).length > 0;
 
-    if (todayWorking && shiftEnded) {
+    if (todayWorking && !todayHasSlots) {
       base.setDate(base.getDate() + 1);
     }
 
@@ -247,10 +260,7 @@
       const d = new Date(base);
       d.setDate(base.getDate() + offset);
 
-      if (isWorkingDay(d)) {
-        days.push(toDayKey(d));
-      }
-
+      if (isWorkingDay(d)) days.push(toDayKey(d));
       offset += 1;
     }
 
@@ -272,12 +282,12 @@
     }
 
     days.forEach((dayKey) => {
+      const selected = state.selectedDayKey === dayKey;
+      const { weekday, md } = dateFaShort(dayKey);
+
       const chip = document.createElement("button");
       chip.type = "button";
-      chip.className =
-        "chip date-chip" + (state.selectedDayKey === dayKey ? " selected" : "");
-
-      const { weekday, md } = dateFaShort(dayKey);
+      chip.className = "chip date-chip" + (selected ? " selected" : "");
 
       chip.innerHTML = `
         <span class="chip-icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
@@ -319,27 +329,26 @@
     }
 
     // ensure selection (store minute-of-day)
-    if (state.selectedTimeMin == null)
-      state.selectedTimeMin = slots[0].getHours() * 60 + slots[0].getMinutes();
-    else {
-      const slotMins = slots.map((s) => s.getHours() * 60 + s.getMinutes());
-      if (!slotMins.includes(state.selectedTimeMin))
-        state.selectedTimeMin = slotMins[0];
+    const slotMins = slots.map((s) => s.getHours() * 60 + s.getMinutes());
+    if (
+      state.selectedTimeMin == null ||
+      !slotMins.includes(state.selectedTimeMin)
+    ) {
+      state.selectedTimeMin = slotMins[0];
     }
 
     slots.forEach((start) => {
       const minute = start.getHours() * 60 + start.getMinutes();
+      const selected = state.selectedTimeMin === minute;
 
       const chip = document.createElement("button");
       chip.type = "button";
-      chip.className =
-        "chip time-chip" +
-        (state.selectedTimeMin === minute ? " selected" : "");
+      chip.className = "chip time-chip" + (selected ? " selected" : "");
 
       chip.innerHTML = `
-    <span class="chip-icon" aria-hidden="true"><i class="fa-solid fa-clock"></i></span>
-    <span>${timeFa(start)}</span>
-  `;
+        <span class="chip-icon" aria-hidden="true"><i class="fa-solid fa-clock"></i></span>
+        <span>${timeFa(start)}</span>
+      `;
 
       chip.addEventListener("click", () => {
         state.selectedTimeMin = minute;
@@ -368,19 +377,22 @@
 
     const { weekday, md } = dateFaShort(state.selectedDayKey);
     const dateLabel = `${weekday} ${md}`;
+
     const dt = dateFromDayKeyAndMinute(
       state.selectedDayKey,
       state.selectedTimeMin,
     );
     const timeLabel = timeFa(dt);
+
     const note = (dom.bookingNote?.value || "").trim();
 
     return `سلام عزیزم 🌸
 
-برای ${services}
-تاریخ ${dateLabel}
-ساعت ${timeLabel}
-وقت می‌خواستم 💅✨${note ? `\n\n${note}` : ""}
+برای ${services} می‌خواستم وقت بگیرم 💅
+
+📅 ${dateLabel}
+🕒 ${timeLabel}
+${note ? `\n📝 ${note}` : ""}
 
 اگه اوکیه لطفاً خبرم کن 🤍
 مرسی ❤️`;
@@ -414,19 +426,23 @@
       const dot = document.createElement("button");
       dot.type = "button";
       dot.className = "gallery-dot" + (i === active ? " active" : "");
+
       dot.addEventListener("click", () => {
         state.galleryIndex = i;
         renderGallery();
         restartAuto();
       });
+
       dom.galleryDots.appendChild(dot);
     }
   }
 
   function renderGallery() {
     if (!dom.galleryImage || !GALLERY.length) return;
+
     const total = GALLERY.length;
     state.galleryIndex = ((state.galleryIndex % total) + total) % total;
+
     dom.galleryImage.setAttribute(
       "src",
       encodeURI(GALLERY[state.galleryIndex]),
@@ -452,7 +468,6 @@
   }
 
   function onPointerDown(e) {
-    // Pause autoplay while user interacts (better UX)
     clearInterval(state.autoTimer);
 
     state.swipe.active = true;
@@ -488,20 +503,15 @@
     if (!state.swipe.active) return;
 
     const dx = e.clientX - state.swipe.startX;
-
     state.swipe.active = false;
 
-    // Only if it was a horizontal swipe
     if (!state.swipe.locked) {
       restartAuto();
       return;
     }
 
-    if (Math.abs(dx) >= 45) {
-      swipeToNext(swipeDirFromDx(dx));
-    } else {
-      restartAuto();
-    }
+    if (Math.abs(dx) >= 45) swipeToNext(swipeDirFromDx(dx));
+    else restartAuto();
   }
 
   function onPointerCancel() {
@@ -511,35 +521,25 @@
   }
 
   // =========================
-  // Scroll helpers
-  // =========================
-  function focusBooking() {
-    dom.bookingPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  // =========================
   // Events
   // =========================
-  dom.toggleHelp?.addEventListener("click", () =>
-    dom.helpPanel?.classList.toggle("app-hidden"),
-  );
-
-  dom.focusFooter?.addEventListener("click", () => {
-    dom.footer?.scrollIntoView({ behavior: "smooth", block: "start" });
+  dom.toggleHelp?.addEventListener("click", () => {
+    dom.helpPanel?.classList.toggle("app-hidden");
   });
 
-  dom.focusBooking?.addEventListener("click", focusBooking);
-  dom.heroCta?.addEventListener("click", focusBooking);
+  dom.focusFooter?.addEventListener("click", () => scrollToEl(dom.footer));
+  dom.focusBooking?.addEventListener("click", () =>
+    scrollToEl(dom.bookingPanel),
+  );
+  dom.heroCta?.addEventListener("click", () => scrollToEl(dom.bookingPanel));
+
   dom.startWhatsapp?.addEventListener("click", openWhatsapp);
 
-  // Scroll-to-top for the scroll container (.app)
-  dom.scrollTop?.addEventListener("click", (e) => {
-    dom.app?.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  dom.scrollTop?.addEventListener("click", scrollAppTop);
 
-  dom.toastClose?.addEventListener("click", () =>
-    dom.toast?.classList.add("app-hidden"),
-  );
+  dom.toastClose?.addEventListener("click", () => {
+    dom.toast?.classList.add("app-hidden");
+  });
 
   if (dom.galleryCard) {
     dom.galleryCard.addEventListener("pointerdown", onPointerDown, {
